@@ -1,0 +1,57 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+  previewFeatures     = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Vehicle {
+  id        String    @id @default(uuid()) @db.Uuid
+  plate     String
+  color     String
+  brand     String
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  usages Usage[]
+
+  @@unique([plate], map: "vehicles_plate_active_key", where: raw("deleted_at IS NULL"))
+  @@map("vehicles")
+}
+
+model Driver {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  usages Usage[]
+
+  @@map("drivers")
+}
+
+model Usage {
+  id        String    @id @default(uuid()) @db.Uuid
+  vehicleId String    @map("vehicle_id") @db.Uuid
+  driverId  String    @map("driver_id") @db.Uuid
+  startedAt DateTime  @map("started_at") @db.Timestamptz(3)
+  endedAt   DateTime? @map("ended_at") @db.Timestamptz(3)
+  reason    String
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Restrict)
+
+  @@index([vehicleId, startedAt(sort: Desc)])
+  @@index([driverId, startedAt(sort: Desc)])
+  @@index([startedAt(sort: Desc)])
+  @@map("usages")
+}

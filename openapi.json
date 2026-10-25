@@ -1,0 +1,1096 @@
+{
+  "components": {
+    "schemas": {
+      "CreateDriverRequestDto": {
+        "properties": {
+          "name": {
+            "example": "Ana Souza",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreateVehicleRequestDto": {
+        "properties": {
+          "brand": {
+            "example": "Fiat",
+            "type": "string"
+          },
+          "color": {
+            "example": "Prata",
+            "type": "string"
+          },
+          "plate": {
+            "description": "Placa no padrão antigo (ABC1234) ou Mercosul (ABC1D23). Minúsculas viram maiúsculas; espaços e hífen são removidos.",
+            "example": "ABC1D23",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plate",
+          "color",
+          "brand"
+        ],
+        "type": "object"
+      },
+      "DatabaseStatus": {
+        "enum": [
+          "up",
+          "down"
+        ],
+        "type": "string"
+      },
+      "DriverResponseDto": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "example": "Ana Souza",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "ErrorResponseDto": {
+        "properties": {
+          "error": {
+            "example": "Bad Request",
+            "type": "string"
+          },
+          "errors": {
+            "description": "Lista de violações; vazia quando o erro não é de campo.",
+            "items": {
+              "$ref": "#/components/schemas/RuleViolationResponseDto"
+            },
+            "type": "array"
+          },
+          "message": {
+            "example": "Placa inválida: use o formato ABC1234 ou ABC1D23.",
+            "type": "string"
+          },
+          "statusCode": {
+            "example": 400,
+            "type": "number"
+          }
+        },
+        "required": [
+          "statusCode",
+          "error",
+          "message",
+          "errors"
+        ],
+        "type": "object"
+      },
+      "FinishUsageRequestDto": {
+        "properties": {
+          "endedAt": {
+            "description": "Data e hora de término com fuso, por exemplo 2026-10-25T18:00:00-03:00. Padrão: agora. Deve ser posterior ao início e não pode estar no futuro.",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HealthResponseDto": {
+        "properties": {
+          "database": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DatabaseStatus"
+              }
+            ]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HealthStatus"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "database"
+        ],
+        "type": "object"
+      },
+      "HealthStatus": {
+        "enum": [
+          "ok",
+          "error"
+        ],
+        "type": "string"
+      },
+      "RuleViolationResponseDto": {
+        "properties": {
+          "field": {
+            "description": "Campo ou regra que impediu a operação.",
+            "example": "plate",
+            "type": "string"
+          },
+          "message": {
+            "example": "Placa inválida: use o formato ABC1234 ou ABC1D23.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "message"
+        ],
+        "type": "object"
+      },
+      "StartUsageRequestDto": {
+        "properties": {
+          "driverId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "reason": {
+            "example": "Visita ao cliente em Campinas",
+            "type": "string"
+          },
+          "startedAt": {
+            "description": "Data e hora de início com fuso, por exemplo 2026-10-25T08:00:00-03:00. Padrão: agora. Não pode estar no futuro.",
+            "format": "date-time",
+            "type": "string"
+          },
+          "vehicleId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vehicleId",
+          "driverId",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "UpdateDriverRequestDto": {
+        "properties": {
+          "name": {
+            "example": "Ana Souza",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "UpdateVehicleRequestDto": {
+        "properties": {
+          "brand": {
+            "example": "Volkswagen",
+            "type": "string"
+          },
+          "color": {
+            "example": "Preto",
+            "type": "string"
+          },
+          "plate": {
+            "description": "Placa no padrão antigo (ABC1234) ou Mercosul (ABC1D23). Minúsculas viram maiúsculas; espaços e hífen são removidos.",
+            "example": "ABC1D23",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UsageResponseDto": {
+        "properties": {
+          "driver": {
+            "$ref": "#/components/schemas/DriverResponseDto"
+          },
+          "endedAt": {
+            "description": "Vazio enquanto a utilização está em andamento.",
+            "example": null,
+            "format": "date-time",
+            "nullable": true,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "reason": {
+            "example": "Visita ao cliente em Campinas",
+            "type": "string"
+          },
+          "startedAt": {
+            "example": "2026-10-25T11:00:00.000Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "vehicle": {
+            "$ref": "#/components/schemas/VehicleResponseDto"
+          }
+        },
+        "required": [
+          "id",
+          "startedAt",
+          "endedAt",
+          "reason",
+          "driver",
+          "vehicle"
+        ],
+        "type": "object"
+      },
+      "VehicleResponseDto": {
+        "properties": {
+          "brand": {
+            "example": "Fiat",
+            "type": "string"
+          },
+          "color": {
+            "example": "Prata",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "plate": {
+            "example": "ABC1D23",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "plate",
+          "color",
+          "brand"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "api-key": {
+        "description": "Chave de API (exigida quando API_KEY está definida).",
+        "in": "header",
+        "name": "x-api-key",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "API para controlar a utilização dos automóveis de uma empresa: cadastro de automóveis, de motoristas e registro de utilizações. Quando a variável API_KEY está definida no servidor, envie o cabeçalho x-api-key em todas as rotas, exceto /health e /docs.",
+    "title": "Vehicle API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/drivers": {
+      "get": {
+        "operationId": "DriversController_list",
+        "parameters": [
+          {
+            "description": "Filtra pelo nome ou parte dele, sem diferenciar maiúsculas.",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "example": "carla",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DriverResponseDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "drivers"
+        ]
+      },
+      "post": {
+        "operationId": "DriversController_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDriverRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "drivers"
+        ]
+      }
+    },
+    "/drivers/{id}": {
+      "delete": {
+        "operationId": "DriversController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Motorista excluído."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Motorista não encontrado."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Motorista utilizando um automóvel."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "drivers"
+        ]
+      },
+      "get": {
+        "operationId": "DriversController_findOne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Motorista não encontrado."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "drivers"
+        ]
+      },
+      "patch": {
+        "operationId": "DriversController_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDriverRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Motorista não encontrado."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "drivers"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            },
+            "description": "Banco de dados indisponível."
+          }
+        },
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/usages": {
+      "get": {
+        "operationId": "UsagesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UsageResponseDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Utilizações da mais recente para a mais antiga."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "usages"
+        ]
+      },
+      "post": {
+        "operationId": "UsagesController_start",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "agora": {
+                  "summary": "Inicia agora",
+                  "value": {
+                    "driverId": "<id do motorista>",
+                    "reason": "Visita ao cliente em Campinas",
+                    "vehicleId": "<id do automóvel>"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/StartUsageRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel em uso ou motorista já utilizando outro automóvel."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel ou motorista inexistente, ou data de início no futuro."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "usages"
+        ]
+      }
+    },
+    "/usages/{id}/finish": {
+      "patch": {
+        "operationId": "UsagesController_finish",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "agora": {
+                  "summary": "Finaliza agora",
+                  "value": {}
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/FinishUsageRequestDto"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Utilização não encontrada."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Utilização já finalizada."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Data de término no futuro ou anterior ao início."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "usages"
+        ]
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "operationId": "VehiclesController_list",
+        "parameters": [
+          {
+            "description": "Filtra pela cor exata, sem diferenciar maiúsculas.",
+            "in": "query",
+            "name": "color",
+            "required": false,
+            "schema": {
+              "example": "Prata",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filtra pela marca exata, sem diferenciar maiúsculas.",
+            "in": "query",
+            "name": "brand",
+            "required": false,
+            "schema": {
+              "example": "Fiat",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VehicleResponseDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "post": {
+        "operationId": "VehiclesController_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVehicleRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Placa já cadastrada."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "vehicles"
+        ]
+      }
+    },
+    "/vehicles/{id}": {
+      "delete": {
+        "operationId": "VehiclesController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Automóvel excluído."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel não encontrado."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel em uso."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "get": {
+        "operationId": "VehiclesController_findOne",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel não encontrado."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "vehicles"
+        ]
+      },
+      "patch": {
+        "operationId": "VehiclesController_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleResponseDto"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Entrada em formato inválido."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Automóvel não encontrado."
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "Placa já cadastrada em outro automóvel."
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "tags": [
+          "vehicles"
+        ]
+      }
+    }
+  },
+  "servers": [],
+  "tags": []
+}
